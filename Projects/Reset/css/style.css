@@ -1,0 +1,73 @@
+/* ---------- Page ---------- */
+
+body {
+
+    margin: 0;
+
+    background: #111;
+
+    color: white;
+
+    font-family: sans-serif;
+
+}
+
+/* ---------- Center Everything ---------- */
+
+main {
+
+    min-height: 100vh;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    align-items: center;
+
+    text-align: center;
+
+}
+
+/* ---------- Typography ---------- */
+
+h1 {
+
+    font-size: 3rem;
+
+    margin-bottom: .25rem;
+
+}
+
+.subtitle {
+
+    color: #bbbbbb;
+
+    margin-bottom: 3rem;
+
+}
+
+/* ---------- Circle ---------- */
+
+.circle {
+
+    width: 220px;
+
+    height: 220px;
+
+    border-radius: 50%;
+
+    background: #5d92aa;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    font-size: 1.5rem;
+
+    letter-spacing: .15rem;
+
+}
