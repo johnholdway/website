@@ -41,3 +41,13 @@ body {
         grid-template-columns: 1fr 1fr;
     }
 }
+.breathing-circle {
+
+    width: 180px;
+    height: 180px;
+
+    border-radius: 50%;
+
+    background: #4d8fa8;
+
+}
