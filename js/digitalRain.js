@@ -111,7 +111,7 @@ let availableCharacters = getCharacters();
 setInterval(drawMatrix,35);
 
 
-
+/*
 // Add user characters
 
 document
@@ -132,7 +132,7 @@ document
 
 });
 
-
+*/
 
 // Resize handling
 
@@ -148,6 +148,7 @@ window.addEventListener("resize",()=>{
 
 });
 
+/*
 document
 .getElementById("pixelMode")
 .addEventListener("click",()=>{
@@ -164,3 +165,4 @@ document
     rainMode = "matrix";
 
 });
+*/
