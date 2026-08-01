@@ -103,7 +103,7 @@ h2 {
 
 .card {
 
-    background-color: #222222;
+    background-color: rgba(34,34,34,0.85);
 
     border: 1px solid #444444;
 
@@ -172,5 +172,33 @@ footer {
         grid-template-columns: repeat(3, 1fr);
 
     }
+
+}
+
+/* ---------- Matrix Background ---------- */
+
+#matrixCanvas {
+
+    position: fixed;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    z-index: 0;
+
+    pointer-events: none;
+}
+
+
+header,
+main,
+footer {
+
+    position: relative;
+
+    z-index: 1;
 
 }
