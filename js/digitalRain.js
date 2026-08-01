@@ -54,7 +54,7 @@ initializeDrops();
 
 function getCharacters(){
 
-    return baseCharacters + customCharacters;
+    return rainModes[rainMode] + customCharacters;
 
 }
 
