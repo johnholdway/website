@@ -7,8 +7,23 @@ canvas.height = window.innerHeight;
 
 
 // Default Matrix characters
-const baseCharacters =
-"アァイウエオ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ$#@%&";
+let rainMode = "matrix";
+
+const rainModes = {
+
+    matrix:
+    "アァイウエオ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ$#@%&",
+
+    pixels:
+    "■",
+
+    binary:
+    "01",
+
+    blocks:
+    "█▓▒░"
+
+};
 
 
 // User added characters
@@ -56,11 +71,9 @@ function drawMatrix(){
     );
 
 
-    ctx.fillStyle = "#00ff41";
-    ctx.font = fontSize + "px monospace";
+ctx.font = fontSize + "px monospace";
 
-
-    let availableCharacters = getCharacters();
+let availableCharacters = getCharacters();
 
 
     for(let i = 0; i < drops.length; i++){
@@ -132,5 +145,22 @@ window.addEventListener("resize",()=>{
     Math.floor(canvas.width / fontSize);
 
     initializeDrops();
+
+});
+
+document
+.getElementById("pixelMode")
+.addEventListener("click",()=>{
+
+    rainMode = "pixels";
+
+});
+
+
+document
+.getElementById("matrixMode")
+.addEventListener("click",()=>{
+
+    rainMode = "matrix";
 
 });
