@@ -1,3 +1,5 @@
+console.log("digitalRain is running");
+
 const canvas = document.getElementById("matrixCanvas");
 const ctx = canvas.getContext("2d");
 
