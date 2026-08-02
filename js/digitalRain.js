@@ -23,7 +23,7 @@ const rainModes = {
         characters:
         "■",
 
-        fontSize: 18
+        fontSize: 8
     },
 
     binary: {
@@ -51,7 +51,7 @@ const rainModes = {
         characters:
         "○",
 
-        fontSize: 20
+        fontSize: 25
     }
 
 };
@@ -126,7 +126,7 @@ function drawCircle(x,y){
     ctx.arc(
         x,
         y,
-        Math.random() * 7 + 2, //change circle size here
+        Math.random() * 12 + 2, //change circle size here
         0,
         Math.PI * 2
     );
