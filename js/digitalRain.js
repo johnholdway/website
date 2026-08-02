@@ -150,7 +150,7 @@ window.addEventListener("resize",()=>{
 
 });
 
-/*
+
 document
 .getElementById("pixelMode")
 .addEventListener("click",()=>{
@@ -167,4 +167,3 @@ document
     rainMode = "matrix";
 
 });
-*/
