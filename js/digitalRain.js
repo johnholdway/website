@@ -8,37 +8,60 @@ canvas.height = window.innerHeight;
 
 
 // Default Matrix characters
-let rainMode = "pixels";
+let rainMode = "bauhaus";
 
 const rainModes = {
 
-    matrix:
-    "アァイウエオ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ$#@%&",
+    matrix: {
+        characters:
+        "アァイウエオ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ$#@%&",
 
-    pixels:
-    "■",
+        fontSize: 12
+    },
 
-    binary:
-    "01",
+    pixels: {
+        characters:
+        "■",
 
-    blocks:
-    "█▓▒░",
+        fontSize: 18
+    },
 
-    bauhaus:
-    "■",
+    binary: {
+        characters:
+        "01",
 
-    circles:
-    "○"
+        fontSize: 18
+    },
+
+    blocks: {
+        characters:
+        "█▓▒░",
+
+        fontSize: 20
+    },
+
+    bauhaus: {
+        characters:
+        "■",
+
+        fontSize: 30
+    },
+
+    circles: {
+        characters:
+        "○",
+
+        fontSize: 20
+    }
 
 };
-
 
 // User added characters
 let customCharacters = "";
 
 
 
-const fontSize = 18;
+let fontSize = rainModes[rainMode].fontSize;
 
 let columns = Math.floor(canvas.width / fontSize);
 
@@ -61,7 +84,7 @@ initializeDrops();
 
 function getCharacters(){
 
-    return rainModes[rainMode] + customCharacters;
+    return rainModes[rainMode].characters + customCharacters;
 
 }
 
@@ -103,7 +126,7 @@ function drawCircle(x,y){
     ctx.arc(
         x,
         y,
-        5,
+        Math.random() * 7 + 2, //change circle size here
         0,
         Math.PI * 2
     );
@@ -113,7 +136,7 @@ function drawCircle(x,y){
 }
 
 function drawMatrix(){
-
+// This piece the last number affects the trail length, the smaller the number the longer the trail 0.08 is the original and 1.0 is instant erase.
     ctx.fillStyle = "rgba(0,0,0,0.08)";
     ctx.fillRect(
         0,
@@ -183,8 +206,8 @@ let availableCharacters = getCharacters();
 
 }
 
-
-setInterval(drawMatrix,35);
+// This is the speed of the rain, the smaller the number the faster the rain. I started with 35 milliseconds.
+setInterval(drawMatrix,70);
 
 
 /*
@@ -231,6 +254,12 @@ document
 
     rainMode = "pixels";
 
+    fontSize = rainModes[rainMode].fontSize;
+
+    columns = Math.floor(canvas.width / fontSize);
+
+    initializeDrops();
+
 });
 
 
@@ -240,6 +269,12 @@ document
 
     rainMode = "matrix";
 
+    fontSize = rainModes[rainMode].fontSize;
+
+    columns = Math.floor(canvas.width / fontSize);
+
+    initializeDrops();
+
 });
 
 document
@@ -247,6 +282,12 @@ document
 .addEventListener("click",()=>{
 
     rainMode = "bauhaus";
+
+    fontSize = rainModes[rainMode].fontSize;
+
+    columns = Math.floor(canvas.width / fontSize);
+
+    initializeDrops();
 
 });
 
@@ -257,6 +298,13 @@ if(circleButton){
     circleButton.addEventListener("click",()=>{
 
         rainMode = "circles";
+
+        fontSize = rainModes[rainMode].fontSize;
+
+        columns = Math.floor(canvas.width / fontSize);
+
+        initializeDrops();
+
         console.log("circle mode selected");
 
     });
