@@ -8,7 +8,7 @@ canvas.height = window.innerHeight;
 
 
 // Default Matrix characters
-let rainMode = "bauhaus";
+let rainMode = "circles";
 
 const rainModes = {
 
@@ -26,6 +26,9 @@ const rainModes = {
 
     bauhaus:
     "■",
+
+    circles:
+    "○"
 
 };
 
@@ -91,6 +94,23 @@ function drawBauhaus(x,y){
 
 }
 
+function drawCircle(x,y){
+
+    ctx.fillStyle = "#aaaaaa";
+
+    ctx.beginPath();
+
+    ctx.arc(
+        x,
+        y,
+        5,
+        0,
+        Math.PI * 2
+    );
+
+    ctx.fill();
+
+}
 
 function drawMatrix(){
 
@@ -121,21 +141,33 @@ let availableCharacters = getCharacters();
 
         if(rainMode === "bauhaus"){
 
-        drawBauhaus(
-            i * fontSize,
-            drops[i] * fontSize
-        );
+            drawBauhaus(
+                i * fontSize,
+                drops[i] * fontSize
+            );
 
         }
+
+        else if(rainMode === "circles"){
+
+            drawCircle(
+                i * fontSize,
+                drops[i] * fontSize
+            );
+
+        }
+
         else {
 
-        ctx.fillText(
-            character,
-            i * fontSize,
-            drops[i] * fontSize
-        );
+            ctx.fillText(
+                character,
+                i * fontSize,
+                drops[i] * fontSize
+            );
 
-}
+        }
+
+
 
 
         if(
@@ -215,5 +247,13 @@ document
 .addEventListener("click",()=>{
 
     rainMode = "bauhaus";
+
+});
+
+document
+.getElementById("circleMode")
+.addEventListener("click",()=>{
+
+    rainMode = "circles";
 
 });
