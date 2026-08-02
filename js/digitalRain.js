@@ -250,10 +250,15 @@ document
 
 });
 
-document
-.getElementById("circleMode")
-.addEventListener("click",()=>{
+const circleButton = document.getElementById("circleMode");
 
-    rainMode = "circles";
+if(circleButton){
 
-});
+    circleButton.addEventListener("click",()=>{
+
+        rainMode = "circles";
+        console.log("circle mode selected");
+
+    });
+
+}
