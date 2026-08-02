@@ -8,7 +8,7 @@ canvas.height = window.innerHeight;
 
 
 // Default Matrix characters
-let rainMode = "circles";
+let rainMode = "pixels";
 
 const rainModes = {
 
