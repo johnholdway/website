@@ -8,7 +8,7 @@ canvas.height = window.innerHeight;
 
 
 // Default Matrix characters
-let rainMode = "pixels";
+let rainMode = "bauhaus";
 
 const rainModes = {
 
@@ -22,7 +22,10 @@ const rainModes = {
     "01",
 
     blocks:
-    "█▓▒░"
+    "█▓▒░",
+
+    bauhaus:
+    "■",
 
 };
 
@@ -60,6 +63,34 @@ function getCharacters(){
 }
 
 
+function drawBauhaus(x,y){
+
+    let colors = [
+        "#ff0000",
+        "#ffff00",
+        "#0000ff",
+        "#000000"
+    ];
+
+    ctx.fillStyle =
+    colors[
+        Math.floor(Math.random()*colors.length)
+    ];
+
+
+    let size =
+    Math.floor(Math.random()*30)+10;
+
+
+    ctx.fillRect(
+        x,
+        y,
+        size,
+        size
+    );
+
+}
+
 
 function drawMatrix(){
 
@@ -88,12 +119,23 @@ let availableCharacters = getCharacters();
             )
         ];
 
+        if(rainMode === "bauhaus"){
+
+        drawBauhaus(
+            i * fontSize,
+            drops[i] * fontSize
+        );
+
+        }
+        else {
 
         ctx.fillText(
             character,
             i * fontSize,
             drops[i] * fontSize
         );
+
+}
 
 
         if(
@@ -165,5 +207,13 @@ document
 .addEventListener("click",()=>{
 
     rainMode = "matrix";
+
+});
+
+document
+.getElementById("bauhausMode")
+.addEventListener("click",()=>{
+
+    rainMode = "bauhaus";
 
 });
