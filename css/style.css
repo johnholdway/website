@@ -70,3 +70,14 @@ body {
 
     z-index: 0;
 }
+
+.itch-embed {
+    width: 100%;
+}
+
+.itch-embed iframe {
+    width: 100%;
+    max-width: 552px;
+    height: 167px;
+    border: 0;
+}
