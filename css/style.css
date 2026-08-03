@@ -81,3 +81,17 @@ body {
     height: 167px;
     border: 0;
 }
+
+.bandcamp-embed {
+    width: 100%;
+}
+
+.bandcamp-embed iframe {
+    width: 100%;
+    max-width: 350px;
+    aspect-ratio: 1 / 1;
+    height: auto;
+    border: 0;
+    display: block;
+    margin: 0 auto;
+}
