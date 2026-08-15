@@ -9,8 +9,16 @@ let centerY;
 let rotation = 0;
 let zoom = 0;
 
+const symmetry = 8;
+const particles = [];
+
+
+// ----------------------------------------
+// Canvas
+// ----------------------------------------
 
 function resizeCanvas() {
+
     width = canvas.width = window.innerWidth;
     height = canvas.height = window.innerHeight;
 
@@ -23,90 +31,166 @@ window.addEventListener("resize", resizeCanvas);
 resizeCanvas();
 
 
-function drawPattern(scale, time) {
+// ----------------------------------------
+// Particle
+// ----------------------------------------
 
-    const radius = Math.max(width, height) * scale;
+function createParticle() {
 
-    const wedgeAngle = Math.PI * 2 / 8;
+    return {
+
+        distance: Math.random(),
+
+        speed:
+            0.00003 +
+            Math.random() * 0.00008,
+
+        angle:
+            (Math.random() - 0.5) *
+            (Math.PI / symmetry),
+
+        size:
+            2 + Math.random() * 5,
+
+        length:
+            20 + Math.random() * 80,
+
+        hue:
+            Math.random() * 360,
+
+        rotation:
+            Math.random() * Math.PI * 2,
+
+        rotationSpeed:
+            (Math.random() - 0.5) * 0.003
+    };
+}
+
+
+// Create initial particles
+
+for (let i = 0; i < 80; i++) {
+
+    particles.push(
+        createParticle()
+    );
+}
+
+
+// ----------------------------------------
+// Draw one particle
+// ----------------------------------------
+
+function drawParticle(
+    particle,
+    radius,
+    time
+) {
+
+    const wedgeAngle =
+        Math.PI * 2 / symmetry;
+
+
+    // Particle moves outward
+    const distance =
+        particle.distance * radius;
+
+
+    // Slowly curve its path
+    const angle =
+        particle.angle +
+        Math.sin(
+            time * 0.8 +
+            particle.distance * 10
+        ) * 0.15;
+
+
+    const x =
+        Math.cos(angle) *
+        distance;
+
+    const y =
+        Math.sin(angle) *
+        distance;
+
 
     ctx.save();
 
-    // Keep the pattern inside one wedge
-    ctx.beginPath();
+    ctx.translate(x, y);
 
-    ctx.moveTo(0, 0);
-
-    ctx.arc(
-        0,
-        0,
-        radius,
-        -wedgeAngle / 2,
-        wedgeAngle / 2
+    ctx.rotate(
+        particle.rotation
     );
 
-    ctx.closePath();
 
-    ctx.clip();
+    // --------------------------------
+    // Fading trail
+    // --------------------------------
 
+    const gradient =
+        ctx.createLinearGradient(
+            -particle.length,
+            0,
+            0,
+            0
+        );
 
-    // Gradient
-    const gradient = ctx.createLinearGradient(
+    gradient.addColorStop(
         0,
-        0,
-        radius,
-        0
+        `hsla(${particle.hue},100%,60%,0)`
     );
 
-    gradient.addColorStop(0, "#ff00cc");
-    gradient.addColorStop(0.5, "#6600ff");
-    gradient.addColorStop(1, "#00ccff");
+    gradient.addColorStop(
+        1,
+        `hsla(${particle.hue},100%,70%,0.9)`
+    );
+
 
     ctx.fillStyle = gradient;
 
+
     ctx.fillRect(
-        0,
-        -radius,
-        radius,
-        radius * 2
+        -particle.length,
+        -particle.size / 2,
+        particle.length,
+        particle.size
     );
 
 
-    // Moving circles
-    for (let i = 1; i < 13; i++) {
+    // --------------------------------
+    // Particle head
+    // --------------------------------
 
-        const distance =
-            radius *
-            (i / 12);
+    ctx.fillStyle =
+        `hsl(${particle.hue},100%,75%)`;
 
-        const wave =
-            Math.sin(
-                time * 0.8 +
-                i
-            ) * radius * 0.15;
+    ctx.fillRect(
+        -particle.size / 2,
+        -particle.size / 2,
+        particle.size,
+        particle.size
+    );
 
-        ctx.beginPath();
-
-        ctx.arc(
-            distance,
-            wave,
-            radius * 0.045,
-            0,
-            Math.PI * 2
-        );
-
-        ctx.fillStyle =
-            `hsl(${i * 45 + time * 30}, 100%, 60%)`;
-
-        ctx.fill();
-    }
 
     ctx.restore();
 }
 
 
+// ----------------------------------------
+// Draw
+// ----------------------------------------
+
 function draw(time) {
 
-    ctx.fillStyle = "black";
+    const seconds =
+        time * 0.001;
+
+
+    // Fade previous frame slightly
+    // instead of completely clearing it.
+    ctx.fillStyle =
+        "rgba(0, 0, 0, 0.18)";
+
     ctx.fillRect(
         0,
         0,
@@ -122,91 +206,123 @@ function draw(time) {
         centerY
     );
 
-    ctx.rotate(rotation);
+
+    ctx.rotate(
+        rotation
+    );
 
 
-    const symmetry = 8;
+    const radius =
+        Math.max(width, height);
+
+
     const wedgeAngle =
         Math.PI * 2 / symmetry;
 
 
-    /*
-       Draw several nested scales.
+    // --------------------------------
+    // Kaleidoscope
+    // --------------------------------
 
-       As zoom increases, the scales
-       continuously move through one another.
-    */
-
-    for (let layer = 0; layer < 12; layer++) {
-
-        let scale =
-            Math.pow(
-                1.35,
-                layer - 6
-            );
-
-        scale *=
-            Math.pow(
-                1.7,
-                zoom
-            );
-
-
-        // Keep scales in a useful range
-        scale =
-            scale % 3;
-
-
-        if (scale < 0.25) {
-            scale += 0.25;
-        }
-
+    for (
+        let wedge = 0;
+        wedge < symmetry;
+        wedge++
+    ) {
 
         ctx.save();
 
+        ctx.rotate(
+            wedge * wedgeAngle
+        );
+
+
         for (
-            let i = 0;
-            i < symmetry;
-            i++
+            const particle of particles
         ) {
 
+            drawParticle(
+                particle,
+                radius,
+                seconds
+            );
+
+
+            // Mirror the wedge
             ctx.save();
 
-            ctx.rotate(
-                i * wedgeAngle
+            ctx.scale(
+                1,
+                -1
             );
 
-            drawPattern(
-                scale,
-                time * 0.001
-            );
-
-            // Mirror
-            ctx.scale(1, -1);
-
-            drawPattern(
-                scale,
-                time * 0.001
+            drawParticle(
+                particle,
+                radius,
+                seconds
             );
 
             ctx.restore();
         }
 
+
         ctx.restore();
     }
+
 
     ctx.restore();
 
 
-    // Slowly rotate
-    rotation += 0.0015;
+    // --------------------------------
+    // Animate particles
+    // --------------------------------
 
-    // Slowly zoom
+    for (
+        const particle of particles
+    ) {
+
+        particle.distance +=
+            particle.speed *
+            16;
+
+        particle.rotation +=
+            particle.rotationSpeed;
+
+
+        // Reappear at the center
+        // when they leave the field.
+
+        if (
+            particle.distance > 1.1
+        ) {
+
+            particle.distance =
+                -0.05;
+
+            particle.angle =
+                (Math.random() - 0.5) *
+                (Math.PI / symmetry);
+
+            particle.hue =
+                Math.random() * 360;
+        }
+    }
+
+
+    // Kaleidoscope rotation
+    rotation += 0.0008;
+
+
+    // Slow zoom
     zoom += 0.0003;
 
 
-    requestAnimationFrame(draw);
+    requestAnimationFrame(
+        draw
+    );
 }
 
 
-requestAnimationFrame(draw);
+requestAnimationFrame(
+    draw
+);
