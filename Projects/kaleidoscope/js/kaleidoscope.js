@@ -141,7 +141,7 @@ function draw(time) {
 
         let scale =
             Math.pow(
-                1.7,
+                1.35,
                 layer - 6
             );
 
@@ -202,7 +202,7 @@ function draw(time) {
     rotation += 0.0015;
 
     // Slowly zoom
-    zoom += 0.002;
+    zoom += 0.0003;
 
 
     requestAnimationFrame(draw);
