@@ -72,15 +72,15 @@ function drawPattern(scale, time) {
 
 
     // Moving circles
-    for (let i = 1; i < 8; i++) {
+    for (let i = 1; i < 13; i++) {
 
         const distance =
             radius *
-            (i / 8);
+            (i / 12);
 
         const wave =
             Math.sin(
-                time * 1.5 +
+                time * 0.8 +
                 i
             ) * radius * 0.15;
 
