@@ -7,6 +7,8 @@ let centerX;
 let centerY;
 
 let rotation = 0;
+let zoom = 0;
+
 
 function resizeCanvas() {
     width = canvas.width = window.innerWidth;
@@ -21,16 +23,15 @@ window.addEventListener("resize", resizeCanvas);
 resizeCanvas();
 
 
-function drawWedge() {
+function drawPattern(scale, time) {
 
-    const radius = Math.max(width, height);
+    const radius = Math.max(width, height) * scale;
 
-    // The wedge angle
     const wedgeAngle = Math.PI * 2 / 8;
 
     ctx.save();
 
-    // Draw the pattern inside one wedge
+    // Keep the pattern inside one wedge
     ctx.beginPath();
 
     ctx.moveTo(0, 0);
@@ -47,7 +48,8 @@ function drawWedge() {
 
     ctx.clip();
 
-    // Background of the wedge
+
+    // Gradient
     const gradient = ctx.createLinearGradient(
         0,
         0,
@@ -68,22 +70,32 @@ function drawWedge() {
         radius * 2
     );
 
-    // Some circles inside the wedge
+
+    // Moving circles
     for (let i = 1; i < 8; i++) {
 
-        const distance = radius * i / 8;
+        const distance =
+            radius *
+            (i / 8);
+
+        const wave =
+            Math.sin(
+                time * 1.5 +
+                i
+            ) * radius * 0.15;
 
         ctx.beginPath();
 
         ctx.arc(
             distance,
-            Math.sin(i) * radius * 0.15,
-            radius * 0.04,
+            wave,
+            radius * 0.045,
             0,
             Math.PI * 2
         );
 
-        ctx.fillStyle = `hsl(${i * 45}, 100%, 60%)`;
+        ctx.fillStyle =
+            `hsl(${i * 45 + time * 30}, 100%, 60%)`;
 
         ctx.fill();
     }
@@ -92,42 +104,109 @@ function drawWedge() {
 }
 
 
-function draw() {
+function draw(time) {
 
     ctx.fillStyle = "black";
-    ctx.fillRect(0, 0, width, height);
+    ctx.fillRect(
+        0,
+        0,
+        width,
+        height
+    );
+
 
     ctx.save();
 
-    ctx.translate(centerX, centerY);
+    ctx.translate(
+        centerX,
+        centerY
+    );
 
     ctx.rotate(rotation);
 
-    const symmetry = 8;
-    const wedgeAngle = Math.PI * 2 / symmetry;
 
-    for (let i = 0; i < symmetry; i++) {
+    const symmetry = 8;
+    const wedgeAngle =
+        Math.PI * 2 / symmetry;
+
+
+    /*
+       Draw several nested scales.
+
+       As zoom increases, the scales
+       continuously move through one another.
+    */
+
+    for (let layer = 0; layer < 12; layer++) {
+
+        let scale =
+            Math.pow(
+                1.7,
+                layer - 6
+            );
+
+        scale *=
+            Math.pow(
+                1.7,
+                zoom
+            );
+
+
+        // Keep scales in a useful range
+        scale =
+            scale % 3;
+
+
+        if (scale < 0.25) {
+            scale += 0.25;
+        }
+
 
         ctx.save();
 
-        ctx.rotate(i * wedgeAngle);
+        for (
+            let i = 0;
+            i < symmetry;
+            i++
+        ) {
 
-        // Draw the normal wedge
-        drawWedge();
+            ctx.save();
 
-        // Draw its mirror image
-        ctx.scale(1, -1);
+            ctx.rotate(
+                i * wedgeAngle
+            );
 
-        drawWedge();
+            drawPattern(
+                scale,
+                time * 0.001
+            );
+
+            // Mirror
+            ctx.scale(1, -1);
+
+            drawPattern(
+                scale,
+                time * 0.001
+            );
+
+            ctx.restore();
+        }
 
         ctx.restore();
     }
 
     ctx.restore();
 
-    rotation += 0.002;
+
+    // Slowly rotate
+    rotation += 0.0015;
+
+    // Slowly zoom
+    zoom += 0.002;
+
 
     requestAnimationFrame(draw);
 }
 
-draw();
+
+requestAnimationFrame(draw);
