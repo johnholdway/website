@@ -21,43 +21,110 @@ window.addEventListener("resize", resizeCanvas);
 resizeCanvas();
 
 
-function draw() {
-
-    // Clear the canvas
-    ctx.fillStyle = "black";
-    ctx.fillRect(0, 0, width, height);
-
-    // Move to the center
-    ctx.save();
-    ctx.translate(centerX, centerY);
-
-    // Rotate the entire pattern
-    ctx.rotate(rotation);
-
-    // Draw several radial lines
-    ctx.strokeStyle = "white";
-    ctx.lineWidth = 2;
+function drawWedge() {
 
     const radius = Math.max(width, height);
 
-    for (let i = 0; i < 16; i++) {
+    // The wedge angle
+    const wedgeAngle = Math.PI * 2 / 8;
 
-        const angle = (Math.PI * 2 / 16) * i;
+    ctx.save();
+
+    // Draw the pattern inside one wedge
+    ctx.beginPath();
+
+    ctx.moveTo(0, 0);
+
+    ctx.arc(
+        0,
+        0,
+        radius,
+        -wedgeAngle / 2,
+        wedgeAngle / 2
+    );
+
+    ctx.closePath();
+
+    ctx.clip();
+
+    // Background of the wedge
+    const gradient = ctx.createLinearGradient(
+        0,
+        0,
+        radius,
+        0
+    );
+
+    gradient.addColorStop(0, "#ff00cc");
+    gradient.addColorStop(0.5, "#6600ff");
+    gradient.addColorStop(1, "#00ccff");
+
+    ctx.fillStyle = gradient;
+
+    ctx.fillRect(
+        0,
+        -radius,
+        radius,
+        radius * 2
+    );
+
+    // Some circles inside the wedge
+    for (let i = 1; i < 8; i++) {
+
+        const distance = radius * i / 8;
 
         ctx.beginPath();
-        ctx.moveTo(0, 0);
 
-        ctx.lineTo(
-            Math.cos(angle) * radius,
-            Math.sin(angle) * radius
+        ctx.arc(
+            distance,
+            Math.sin(i) * radius * 0.15,
+            radius * 0.04,
+            0,
+            Math.PI * 2
         );
 
-        ctx.stroke();
+        ctx.fillStyle = `hsl(${i * 45}, 100%, 60%)`;
+
+        ctx.fill();
+    }
+
+    ctx.restore();
+}
+
+
+function draw() {
+
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, width, height);
+
+    ctx.save();
+
+    ctx.translate(centerX, centerY);
+
+    ctx.rotate(rotation);
+
+    const symmetry = 8;
+    const wedgeAngle = Math.PI * 2 / symmetry;
+
+    for (let i = 0; i < symmetry; i++) {
+
+        ctx.save();
+
+        ctx.rotate(i * wedgeAngle);
+
+        // Draw the normal wedge
+        drawWedge();
+
+        // Draw its mirror image
+        ctx.scale(1, -1);
+
+        drawWedge();
+
+        ctx.restore();
     }
 
     ctx.restore();
 
-    // Slowly rotate
     rotation += 0.002;
 
     requestAnimationFrame(draw);
