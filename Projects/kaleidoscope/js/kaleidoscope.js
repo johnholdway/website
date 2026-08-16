@@ -259,13 +259,13 @@ function createParticle() {
 
         // adjust size with 2 + Math.random() * 3 as starting point, can be adjusted to experiment
         size:
-            -2 + Math.random() * 4,
+            -0.5 + Math.random() * 2,
 
         audioSensitivity:
-            0.5 + Math.random(),
+            1 + Math.random() * 5,
 
         length:
-            20 + Math.random() * 80,
+            20 + Math.random() * 120,
 
         hue:
             Math.random() * 360,
@@ -501,7 +501,7 @@ function draw(time) {
         const particle of particles
     ) {
         const bassBoost =
-            2 + bassLevel * 0.5;
+            2 + bassLevel * 0.3;
 
         particle.distance +=
             particle.speed *
@@ -536,7 +536,7 @@ function draw(time) {
     
 const midRotation =
     0.0008 +
-    smoothMid * 0.01;
+    smoothMid * 0.001;
 
 rotation +=
     midRotation;
