@@ -34,3 +34,54 @@ footer a {
 footer a:hover {
     color: rgba(255, 255, 255, 0.8);
 }
+
+#audioControls {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 20;
+
+    color: rgba(255, 255, 255, 0.7);
+    font-family: sans-serif;
+    font-size: 11px;
+}
+
+#micButton {
+    padding: 8px 12px;
+
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+
+    background: rgba(0, 0, 0, 0.5);
+    color: rgba(255, 255, 255, 0.75);
+
+    cursor: pointer;
+}
+
+#micButton:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: white;
+}
+
+#audioLevels {
+    display: none;
+    margin-top: 12px;
+    width: 140px;
+}
+
+#audioLevels > div {
+    margin-bottom: 7px;
+}
+
+.meter {
+    margin-top: 3px;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.meter div {
+    height: 100%;
+    width: 0%;
+    background: white;
+    transition: width 0.05s linear;
+}

@@ -1,5 +1,213 @@
+// ----------------------------------------
+// Audio
+// ----------------------------------------
+
+let audioContext;
+let analyser;
+let microphone;
+let audioData;
+
+const micButton =
+    document.getElementById("micButton");
+
+const audioLevels =
+    document.getElementById("audioLevels");
+
+const bassMeter =
+    document.getElementById("bassMeter");
+
+const midMeter =
+    document.getElementById("midMeter");
+
+const trebleMeter =
+    document.getElementById("trebleMeter");
+
+
+micButton.addEventListener(
+    "click",
+    enableMicrophone
+);
+
+
+async function enableMicrophone() {
+
+    try {
+
+        const stream =
+            await navigator.mediaDevices
+                .getUserMedia({
+                    audio: true
+                });
+
+
+        audioContext =
+            new AudioContext();
+
+
+        microphone =
+            audioContext.createMediaStreamSource(
+                stream
+            );
+
+
+        analyser =
+            audioContext.createAnalyser();
+
+
+        analyser.fftSize = 1024;
+
+        analyser.smoothingTimeConstant =
+            0.8;
+
+
+        audioData =
+            new Uint8Array(
+                analyser.frequencyBinCount
+            );
+
+
+        microphone.connect(
+            analyser
+        );
+
+
+        micButton.textContent =
+            "♫ Microphone Active";
+
+        audioLevels.style.display =
+            "block";
+
+
+        analyzeAudio();
+
+
+    } catch (error) {
+
+        console.error(
+            "Microphone access failed:",
+            error
+        );
+
+        micButton.textContent =
+            "Microphone unavailable";
+    }
+}
+
+function getFrequencyRange(
+    startFrequency,
+    endFrequency
+) {
+
+    const nyquist =
+        audioContext.sampleRate / 2;
+
+    const start =
+        Math.floor(
+            startFrequency /
+            nyquist *
+            audioData.length
+        );
+
+    const end =
+        Math.floor(
+            endFrequency /
+            nyquist *
+            audioData.length
+        );
+
+
+    let total = 0;
+    let count = 0;
+
+
+    for (
+        let i = start;
+        i <= end;
+        i++
+    ) {
+
+        total += audioData[i];
+        count++;
+    }
+
+
+    return count
+        ? total / count / 255
+        : 0;
+}
+
+
+function analyzeAudio() {
+
+    analyser.getByteFrequencyData(
+        audioData
+    );
+
+
+    // Approximate frequency bands
+
+    const bass =
+        getFrequencyRange(
+            20,
+            180
+        );
+
+    const mid =
+        getFrequencyRange(
+            180,
+            2000
+        );
+
+    const treble =
+        getFrequencyRange(
+            2000,
+            10000
+        );
+
+
+    bassLevel = bass;
+    midLevel = mid;
+    trebleLevel = treble;
+
+
+// Smooth the responses
+
+smoothBass +=
+    (bassLevel - smoothBass) * 0.08;
+
+smoothMid +=
+    (midLevel - smoothMid) * 0.08;
+
+smoothTreble +=
+    (trebleLevel - smoothTreble) * 0.12;
+
+    // Display them
+
+    bassMeter.style.width =
+        `${bass * 100}%`;
+
+    midMeter.style.width =
+        `${mid * 100}%`;
+
+    trebleMeter.style.width =
+        `${treble * 100}%`;
+
+
+    requestAnimationFrame(
+        analyzeAudio
+    );
+}
+
 const canvas = document.getElementById("visual");
 const ctx = canvas.getContext("2d");
+
+let bassLevel = 0;
+let midLevel = 0;
+let trebleLevel = 0;
+
+let smoothBass = 0;
+let smoothMid = 0;
+let smoothTreble = 0;
 
 let width;
 let height;
@@ -49,8 +257,12 @@ function createParticle() {
             (Math.random() - 0.5) *
             (Math.PI / symmetry),
 
+        // adjust size with 2 + Math.random() * 3 as starting point, can be adjusted to experiment
         size:
-            2 + Math.random() * 5,
+            -2 + Math.random() * 4,
+
+        audioSensitivity:
+            0.5 + Math.random(),
 
         length:
             20 + Math.random() * 80,
@@ -86,6 +298,14 @@ function drawParticle(
     radius,
     time
 ) {
+    const headSize =
+    particle.size *
+    (
+        1 +
+        smoothTreble *
+        particle.audioSensitivity *
+        3
+    );
 
     const wedgeAngle =
         Math.PI * 2 / symmetry;
@@ -153,7 +373,7 @@ function drawParticle(
         -particle.length,
         -particle.size / 2,
         particle.length,
-        particle.size
+        headSize
     );
 
 
@@ -165,10 +385,10 @@ function drawParticle(
         `hsl(${particle.hue},100%,75%)`;
 
     ctx.fillRect(
-        -particle.size / 2,
-        -particle.size / 2,
-        particle.size,
-        particle.size
+        -headSize/ 2,
+        -headSize / 2,
+        headSize,
+        headSize
     );
 
 
@@ -274,16 +494,19 @@ function draw(time) {
 
 
     // --------------------------------
-    // Animate particles
+    // Animate particles - adjust bassBoost 3 as starting point, can be adjusted to experiment
     // --------------------------------
 
     for (
         const particle of particles
     ) {
+        const bassBoost =
+            2 + bassLevel * 0.5;
 
         particle.distance +=
             particle.speed *
-            16;
+            16 *
+            bassBoost;
 
         particle.rotation +=
             particle.rotationSpeed;
@@ -309,8 +532,14 @@ function draw(time) {
     }
 
 
-    // Kaleidoscope rotation
-    rotation += 0.0008;
+    // Kaleidoscope rotation adjust the smoothMid value 0.01 as base 
+    
+const midRotation =
+    0.0008 +
+    smoothMid * 0.01;
+
+rotation +=
+    midRotation;
 
 
     // Slow zoom
